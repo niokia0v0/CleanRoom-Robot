@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- Configuration de base de la page -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface Robot Explorateur SB</title>
+    
+    <!-- Styles CSS -->
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/ros-controls.css">
+    <link rel="stylesheet" href="styles/map.css">
+    <link rel="stylesheet" href="styles/lidar.css">
+    <link rel="stylesheet" href="styles/camera.css">
+    <link rel="stylesheet" href="styles/battery.css">
+    <link rel="stylesheet" href="styles/dock-control.css">
+    <link rel="stylesheet" href="styles/position-display.css">
+    <link rel="stylesheet" href="styles/auto-mode.css">
+    
+    <!-- Bibliothèque ROS pour la communication robotique -->
+    <script src="lib/roslib.min.js" defer></script>
+    
+    <!-- Modules JavaScript avec defer pour chargement asynchrone -->
+    <script src="modules/ros-controls.js" defer></script>
+    <script src="modules/velocity-control.js" defer></script>
+    <script src="modules/map.js" defer></script>
+    <script src="modules/lidar.js" defer></script>
+    <script src="modules/camera.js" defer></script>
+    <script src="modules/battery.js" defer></script>
+    <script src="modules/dock-control.js" defer></script>
+    <script src="modules/position-display.js" defer></script>
+    <script src="modules/semiauto-nav.js" defer></script>
+    <script src="modules/auto-mode.js" defer></script>
+</head>
+
+<body>
+    <!-- Objet global pour partager l'état entre les modules -->
+    <script>
+        // Initialisation de l'objet global pour l'application
+        const RobotApp = {
+            ros: null,            // Objet de connexion ROS principal
+            isConnected: false,   // État de connexion
+            topics: {             // Objets topics ROS
+                cmdVel: null,
+                image: null,
+                lidar: null,
+                battery: null     // Ajout du topic pour la batterie
+            },
+            config: {
+                rosbridge: 'ws://192.168.222.85:9090',
+            }
+        };
+        
+        // Fonction pour déclencher des événements personnalisés
+        RobotApp.triggerEvent = function(eventName, detail = {}) {
+            document.dispatchEvent(new CustomEvent(eventName, { detail }));
+        };
+    </script>
+    
+    <!-- Affichage du statut de connexion -->
+    <div id="status-connection" class="status-connecting">État : Déconnecté</div>
+    
+    <!-- Section connexion + image -->
+    <div class="boutons-et-image">
+        <div class="groupe-boutons">
+            <button id="btn-connect" class="bouton-connect">Connecter</button>
+            <button id="btn-disconnect" class="bouton-disconnect" disabled>Déconnecter</button>
+        </div>
+        <img src="https://th.bing.com/th/id/OIP.bG7f3E8FnYDA23pzZNSQPQHaEK?rs=1&pid=ImgDetMain" alt="Photo du turtlebot4" />
+    </div>
+
+    <!-- Contrôles de vitesse linéaire/angulaire -->
+    <div class="controles-vitesse">
+        <div class="groupe-vitesse">
+            <label>Vitesse linéaire (0-0.3 m/s):</label>
+            <input type="number" id="input-lineaire" min="0" max="0.3" step="0.01" value="0.2">
+            <input type="range" id="slider-lineaire" min="0" max="0.3" step="0.01" value="0.2">
+        </div>
+        <div class="groupe-vitesse">
+            <label>Vitesse angulaire (0-1.9 rad/s):</label>
+            <input type="number" id="input-angulaire" min="0" max="1.9" step="0.01" value="1">
+            <input type="range" id="slider-angulaire" min="0" max="1.9" step="0.01" value="1">
+        </div>
+    </div>
+
+    <div class="dock-controls">
+        <button id="btn-dock" class="vert" disabled>Dock</button>
+        <button id="btn-undock" class="vert" disabled>Undock</button>
+        <span id="dock-feedback" class="dock-feedback"></span>
+    </div>
+
+    <div class="keyboard-controls-info">
+        <p>Contrôle par clavier: <span class="violet">J</span> (avancer), <span class="violet">K</span> (gauche), <span class="violet">L</span> (droite), <span class="vert">M</span> (carte)</p>
+    </div>
+
+    <!-- Section pour la caméra et le map -->
+    <div class="camera-map-container">
+        <!-- Section de la caméra -->
+        <div class="camera-container">
+            <canvas id="cameraFeed" width="480" height="480"></canvas>
+        </div>
+        
+        <!-- Section du lidar et map (avec basculement) -->
+        <div class="lidar-map-container">
+            <!-- Vue lidar -->
+            <div class="lidar-view">
+                <div class="lidar-container">
+                    <canvas id="lidarCanvas" width="400" height="400"></canvas>
+                </div>
+            </div>
+            
+            <!-- Vue map -->
+            <div class="map-view">
+                <div class="map-container">
+                    <img id="staticMap" src="./map/SB.png" alt="Carte de navigation">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ajout de l'élément d'affichage de la batterie à l'extérieur des vues lidar/map -->
+        <div class="battery-panel">
+            <div class="battery-header">
+                <span class="battery-icon">🔋</span>
+                <span class="battery-percentage">---%</span>
+            </div>
+            <div class="battery-details">
+                <div class="battery-voltage" id="battery-voltage">--- V</div>
+                <div class="battery-current" id="battery-current">--- A</div>
+                <div class="battery-power" id="battery-power">--- W</div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="position-panel">
+        <div class="coordinates-display">
+            <div class="coordinate">
+                <span class="coordinate-label">X (m)</span>
+                <span id="position-x-value" class="coordinate-value">---</span>
+            </div>
+            <div class="coordinate">
+                <span class="coordinate-label">Y (m)</span>
+                <span id="position-y-value" class="coordinate-value">---</span>
+            </div>
+            <div class="coordinate">
+                <span class="coordinate-label">θ (° ′ ″)</span>
+                <span id="position-theta-value" class="coordinate-value">---</span>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Script d'initialisation principale -->
+    <script>
+        // Initialisation de l'application quand le DOM est chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            // Déclencher un événement pour signaler que le DOM est prêt
+            RobotApp.triggerEvent('app-init');
+            
+            // Ajouter un écouteur pour nettoyer les ressources avant de quitter la page
+            window.addEventListener('beforeunload', function() {
+                // Déclencher un événement de nettoyage global
+                RobotApp.triggerEvent('app-cleanup');
+            });
+        });
+    </script>
+</body>
+</html>

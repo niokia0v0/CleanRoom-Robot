@@ -1,0 +1,29 @@
+/* dock-control.css - Styles pour les contrôles de dock/undock */
+
+.dock-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.dock-feedback {
+    margin-left: 10px;
+    font-style: italic;
+    color: #666;
+}
+
+#btn-dock, #btn-undock {
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.2s;
+}
+
+#btn-dock:hover, #btn-undock:hover {
+    background-color: #45a049;
+}
+
+#btn-dock:disabled, #btn-undock:disabled {
+    background-color: #cccccc;
+    color: #666666;
+}

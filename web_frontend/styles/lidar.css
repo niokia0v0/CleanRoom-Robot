@@ -1,0 +1,51 @@
+/* lidar.css - Styles pour l'affichage du lidar */
+
+.lidar-container {
+    width: 480px;
+    height: 480px;
+    position: relative;
+    display: block; /* Visible par défaut */
+}
+
+#lidarCanvas {
+    width: 400px;
+    height: 400px;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Classes pour le basculement entre lidar et carte */
+.lidar-map-container {
+    position: relative;
+    width: 480px;
+    height: 480px;
+}
+
+.map-view {
+    display: none; /* Caché par défaut */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.lidar-view {
+    display: block; /* Visible par défaut */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Quand on affiche la carte */
+.show-map .map-view {
+    display: block;
+}
+
+.show-map .lidar-view {
+    display: none;
+}

@@ -1,0 +1,74 @@
+/* battery.css - Styles pour l'affichage de la batterie */
+
+/* Conteneur principal pour l'affichage de la batterie */
+.battery-panel {
+    position: absolute;
+    top: 10px;
+    right: 160px;
+    z-index: 10;
+    background-color: black;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    width: 70px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: white; /* Couleur par défaut pour le texte */
+}
+
+/* Style pour le pourcentage de batterie */
+.battery-percentage {
+    display: block;
+    font-size: 18px;
+    margin: 2px 0;
+    color: white; /* Couleur par défaut pour le pourcentage */
+}
+
+/* Couleurs différentes selon le niveau de batterie */
+.battery-high {
+    color: #4CAF50; /* Vert */
+}
+
+.battery-medium {
+    color: #FF9800; /* Orange */
+}
+
+.battery-low {
+    color: #F44336; /* Rouge */
+}
+
+/* Icône de batterie */
+.battery-icon {
+    font-size: 16px;
+    margin-right: 5px;
+    color: white;
+}
+
+/* Style responsif pour les petits écrans */
+@media (max-width: 768px) {
+    .battery-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: auto;
+    }
+}
+
+.battery-header {
+    border-bottom: 1px solid #444;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+}
+
+.battery-details div {
+    font-size: 12px;
+    line-height: 1.4;
+    color: white;
+    opacity: 0.9;
+}
+
+.battery-power {
+    font-weight: bold;
+    margin-top: 4px;
+}

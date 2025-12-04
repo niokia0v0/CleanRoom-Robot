@@ -1,0 +1,41 @@
+/* auto-mode.css - Styles pour le bouton de mode automatique */
+
+.auto-mode-button {
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.auto-mode-button:hover:not(:disabled) {
+    background-color: #00059b !important;
+}
+
+.auto-mode-button:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.auto-mode-button:disabled {
+    cursor: not-allowed !important;
+}
+
+.keyboard-auto-container {
+    width: 100%;
+    position: relative;
+}
+
+
+.auto-mode-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    z-index: 1000;
+    width: 250px;
+    text-align: center;
+    display: none;
+    left: auto;
+    right: auto;
+    top: 100%;
+    margin-top: 5px;
+}
+
