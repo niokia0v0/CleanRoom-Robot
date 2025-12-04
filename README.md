@@ -25,7 +25,7 @@ Based on **Turtlebot4** and **ROS2**, this system provides a low-latency web int
 **激光雷达可视化与实时监控**：
 Displaying real-time camera stream and high-frequency Lidar point cloud rendered via HTML5 Canvas. The green points represent obstacles detected by the sensor.
 <br>
-<img src="docs/screenshots/lidar.png" width="100%" alt="Lidar View">
+<img src="docs/lidar.png" width="100%" alt="Lidar View">
 
 <br>
 
@@ -33,4 +33,4 @@ Displaying real-time camera stream and high-frequency Lidar point cloud rendered
 **地图校准与导航模式**：
 Real-time localization overlay on the static facility map. The coordinate mapping is achieved through **Affine Transformation** based on the calibration points (orange/red/blue dots).
 <br>
-<img src="docs/screenshots/carte.png" width="100%" alt="Map View">
+<img src="docs/carte.png" width="100%" alt="Map View">
